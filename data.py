@@ -20,20 +20,20 @@ def random_time(start, end):
 
 # Product table
 def create_product():
-    product_name = [
-        "Espresso",
-        "Double Espresso",
-        "Americano",
-        "Long Black",
-        "Macchiato",
-        "Cappuccino",
-        "Flat White",
-        "Cafe Latte",
-        "Mocha",
+    product_data = [
+        ["Espresso", 7],
+        ["Double Espresso", 12],
+        ["Americano", 8],
+        ["Long Black", 8],
+        ["Macchiato", 9],
+        ["Cappuccino", 11],
+        ["Flat White", 13],
+        ["Cafe Latte", 11],
+        ["Mocha", 12],
     ]
-    product_id = np.arange(1, len(product_name) + 1, 1)
-    data = {"product_id": product_id, "product_name": product_name}
-    df = pd.DataFrame(data)
+    product_id = np.arange(1, len(product_data) + 1, 1)
+    df = pd.DataFrame(product_data, columns=["product_name", "price"])
+    df = pd.merge(pd.DataFrame(product_id, columns=["product_id"]), df, left_index=True, right_index=True)
 
     return df
 
@@ -164,9 +164,9 @@ def create_sales(num_orders):
         payment_mode_id = np.random.choice(payment_mode_id_list, p=[0.4, 0.35, 0.1, 0.15])
 
         order_date = fake.date_between_dates(date_start=datetime(2021, 1, 1), date_end=datetime(2024, 3, 31))
-        order_date_id = order_date.strftime("%Y-%m-%d").replace("-", "")
+        order_date_id = int(order_date.strftime("%Y-%m-%d").replace("-", ""))
         order_time = str(random_time(10, 22))
-        order_time_id = order_time.replace(":", "")
+        order_time_id = int(order_time.replace(":", ""))
         order_id = order_date_id + order_time_id
         order = {
             "order_id": order_id,
@@ -185,11 +185,49 @@ def create_sales(num_orders):
             order["line_id"] = line_id
             order["product_id"] = product
             order["unit_count"] = np.random.randint(1, 9)
+            unit_price = product_df[product_df["product_id"] == product]["price"].iloc[0]
+            order["gross_total_sales"] = order["unit_count"] * unit_price
+
+            discount_choices = np.arange(0, 0.41, 0.05)
+            discount_percentage = np.random.choice(
+                discount_choices,
+                p=[
+                    0.6,
+                    0,
+                    0.25,
+                    0.06,
+                    0.04,
+                    0.02,
+                    0.02,
+                    0,
+                    0.01,
+                ],
+            )
+            order["discount"] = discount_percentage * order["gross_total_sales"]
+            order["net_total_sales"] = order["gross_total_sales"] - order["discount"]
             add_order = order.copy()
             orders.append(add_order)
             line_id += 1
 
     df = pd.DataFrame(orders)
+    df["order_line_id"] = df["order_id"] + df["line_id"]
+
+    cols = [
+        "order_line_id",
+        "order_id",
+        "line_id",
+        "order_date_id",
+        "order_time",
+        "payment_mode_id",
+        "outlet_id",
+        "product_id",
+        "unit_count",
+        "gross_total_sales",
+        "discount",
+        "net_total_sales",
+    ]
+    df = df[cols]
+
     return df
 
 
