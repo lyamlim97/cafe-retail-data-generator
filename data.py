@@ -1,5 +1,21 @@
 import numpy as np
 import pandas as pd
+import random
+from faker import Faker
+from datetime import datetime
+from datetime import timedelta
+
+fake = Faker()
+fake.seed_instance(42)
+np.random.seed(42)
+random.seed(42)
+
+
+# Helper functions
+def random_time(start, end):
+    return timedelta(
+        seconds=random.randrange(int(timedelta(hours=start).total_seconds()), int(timedelta(hours=end).total_seconds()))
+    )
 
 
 # Product table
@@ -103,3 +119,79 @@ product_df.to_csv("dim_product.csv", index=False)
 payment_mode_df.to_csv("dim_payment_mode.csv", index=False)
 outlet_df.to_csv("dim_outlet.csv", index=False)
 date_df.to_csv("dim_date.csv", index=False)
+
+
+# Sales table
+def create_sales(num_orders):
+    product_id_list = product_df["product_id"].to_list()
+    payment_mode_id_list = payment_mode_df["payment_mode_id"].to_list()
+    outlet_id_list = outlet_df["outlet_id"].to_list()
+
+    orders = []
+    for x in range(num_orders):
+        outlet_id = np.random.choice(
+            outlet_id_list,
+            p=[
+                0.06,
+                0.055,
+                0.045,
+                0.055,
+                0.045,
+                0.06,
+                0.06,
+                0.055,
+                0.04,
+                0.04,
+                0.035,
+                0.035,
+                0.03,
+                0.03,
+                0.03,
+                0.03,
+                0.03,
+                0.03,
+                0.03,
+                0.04,
+                0.03,
+                0.025,
+                0.025,
+                0.02,
+                0.025,
+                0.025,
+                0.015,
+            ],
+        )
+        payment_mode_id = np.random.choice(payment_mode_id_list, p=[0.4, 0.35, 0.1, 0.15])
+
+        order_date = fake.date_between_dates(date_start=datetime(2021, 1, 1), date_end=datetime(2024, 3, 31))
+        order_date_id = order_date.strftime("%Y-%m-%d").replace("-", "")
+        order_time = str(random_time(10, 22))
+        order_time_id = order_time.replace(":", "")
+        order_id = order_date_id + order_time_id
+        order = {
+            "order_id": order_id,
+            "order_date_id": order_date_id,
+            "order_time": order_time,
+            "outlet_id": outlet_id,
+            "payment_mode_id": payment_mode_id,
+        }
+
+        # Each order can have multiple line items
+        line_id = 1
+        num_products = np.random.randint(1, 5)
+        selected_product_id_list = random.sample(product_id_list, num_products)
+
+        for product in selected_product_id_list:
+            order["line_id"] = line_id
+            order["product_id"] = product
+            order["unit_count"] = np.random.randint(1, 9)
+            add_order = order.copy()
+            orders.append(add_order)
+            line_id += 1
+
+    df = pd.DataFrame(orders)
+    return df
+
+
+sales_df = create_sales(1000)
+sales_df.to_csv("fact_sales.csv", index=False)
