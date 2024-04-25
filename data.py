@@ -21,15 +21,15 @@ def random_time(start, end):
 # Product table
 def create_product():
     product_data = [
-        ["Espresso", 7],
-        ["Double Espresso", 12],
-        ["Americano", 8],
-        ["Long Black", 8],
-        ["Macchiato", 9],
-        ["Cappuccino", 11],
-        ["Flat White", 13],
-        ["Cafe Latte", 11],
-        ["Mocha", 12],
+        ["Espresso", 700],
+        ["Double Espresso", 1200],
+        ["Americano", 800],
+        ["Long Black", 800],
+        ["Macchiato", 900],
+        ["Cappuccino", 1100],
+        ["Flat White", 1300],
+        ["Cafe Latte", 1100],
+        ["Mocha", 1200],
     ]
     product_id = np.arange(1, len(product_data) + 1, 1)
     df = pd.DataFrame(product_data, columns=["product_name", "price"])
@@ -204,7 +204,7 @@ def create_sales(num_orders):
                 ],
             )
             order["discount"] = discount_percentage * order["gross_total_sales"]
-            order["net_total_sales"] = order["gross_total_sales"] - order["discount"]
+            order["net_total_sales"] = int(order["gross_total_sales"] - order["discount"])
             add_order = order.copy()
             orders.append(add_order)
             line_id += 1
