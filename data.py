@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import random
+import math
 from faker import Faker
 from datetime import datetime
 from datetime import timedelta
@@ -203,8 +204,8 @@ def create_sales(num_orders):
                     0.01,
                 ],
             )
-            order["discount"] = discount_percentage * order["gross_total_sales"]
-            order["net_total_sales"] = int(order["gross_total_sales"] - order["discount"])
+            order["discount"] = math.floor(discount_percentage * order["gross_total_sales"])
+            order["net_total_sales"] = order["gross_total_sales"] - order["discount"]
             add_order = order.copy()
             orders.append(add_order)
             line_id += 1
