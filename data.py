@@ -24,14 +24,14 @@ def create_product():
 
 # Payment type table
 def create_payment_mode():
-    payment_type = [
+    payment_mode = [
         "Card",
         "Cash",
         "GrabPay",
         "TnG",
     ]
-    payment_type_id = np.arange(1, len(payment_type) + 1, 1)
-    data = {"product_id": payment_type_id, "product_name": payment_type}
+    payment_mode_id = np.arange(1, len(payment_mode) + 1, 1)
+    data = {"payment_mode_id": payment_mode_id, "payment_mode": payment_mode}
     df = pd.DataFrame(data)
 
     return df
