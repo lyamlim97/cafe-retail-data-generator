@@ -55,7 +55,7 @@ def create_payment_mode():
 
 # Outlet table
 def create_outlet():
-    outlet_location = [
+    outlet_data = [
         ["Pavilion KL", "Central", "Kuala Lumpur"],
         ["The Gardens Mall", "Central", "Kuala Lumpur"],
         ["Sungei Wang Plaza", "Central", "Kuala Lumpur"],
@@ -84,8 +84,8 @@ def create_outlet():
         ["KTCC MALL", "East", "Terengganu"],
         ["Aman Central", "North", "Kedah"],
     ]
-    payment_type_id = np.arange(1, len(outlet_location) + 1, 1)
-    df = pd.DataFrame(outlet_location, columns=["outlet_loation", "region", "state"])
+    payment_type_id = np.arange(1, len(outlet_data) + 1, 1)
+    df = pd.DataFrame(outlet_data, columns=["outlet_loation", "region", "state"])
     df = pd.merge(pd.DataFrame(payment_type_id, columns=["outlet_id"]), df, left_index=True, right_index=True)
 
     return df
