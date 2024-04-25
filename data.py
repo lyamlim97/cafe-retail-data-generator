@@ -211,7 +211,7 @@ def create_sales(num_orders):
             line_id += 1
 
     df = pd.DataFrame(orders)
-    df["order_line_id"] = df["order_id"] + df["line_id"]
+    df["order_line_id"] = df["order_id"].astype(str) + df["line_id"].astype(str)
 
     cols = [
         "order_line_id",
@@ -232,5 +232,5 @@ def create_sales(num_orders):
     return df
 
 
-sales_df = create_sales(1000)
+sales_df = create_sales(1000000)
 sales_df.to_csv("fact_sales.csv", index=False)
