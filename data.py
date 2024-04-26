@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import random
 import math
-import uuid
 from faker import Faker
 from datetime import datetime
 from datetime import timedelta
