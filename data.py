@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import random
 import math
+import uuid
 from faker import Faker
 from datetime import datetime
 from datetime import timedelta
@@ -94,7 +95,7 @@ def create_outlet():
 
 # Date table
 def create_date():
-    df = pd.DataFrame(pd.date_range(start="2021-01-01", end="2024-03-31"), columns=["order_date"])
+    df = pd.DataFrame(pd.date_range(start="2022-01-01", end="2024-03-31"), columns=["order_date"])
     df = df.assign(order_date_id=lambda x: (x["order_date"].dt.strftime("%Y-%m-%d").str.replace("-", "")))
 
     df = df.assign(day_no=lambda x: (x["order_date_id"].str[6:8]).astype(int))
@@ -124,113 +125,129 @@ date_df.to_csv("dim_date.csv", index=False)
 
 # Sales table
 def create_sales(num_orders):
+
+    order_date_list = date_df[["order_date", "order_date_id", "day_name"]].values.tolist()[:31]
     product_id_list = product_df["product_id"].to_list()
     payment_mode_id_list = payment_mode_df["payment_mode_id"].to_list()
     outlet_id_list = outlet_df["outlet_id"].to_list()
-
     orders = []
-    for x in range(num_orders):
-        outlet_id = np.random.choice(
-            outlet_id_list,
-            p=[
-                0.06,
-                0.055,
-                0.045,
-                0.055,
-                0.045,
-                0.06,
-                0.06,
-                0.055,
-                0.04,
-                0.04,
-                0.035,
-                0.035,
-                0.03,
-                0.03,
-                0.03,
-                0.03,
-                0.03,
-                0.03,
-                0.03,
-                0.04,
-                0.03,
-                0.025,
-                0.025,
-                0.02,
-                0.025,
-                0.025,
-                0.015,
-            ],
-        )
-        payment_mode_id = np.random.choice(payment_mode_id_list, p=[0.4, 0.35, 0.1, 0.15])
+    order_id = 1
+    for date in order_date_list:
+        print(date)
+        order_factor = 1
+        noise_factor = round(np.random.randint(-25, 25) / 100, 1)
+        match date[2]:
+            case "Friday":
+                order_factor = order_factor + 0.2 + noise_factor
 
-        order_date = fake.date_between_dates(date_start=datetime(2021, 1, 1), date_end=datetime(2024, 3, 31))
-        order_date_id = int(order_date.strftime("%Y-%m-%d").replace("-", ""))
-        order_time = str(random_time(10, 22))
-        order_time_id = int(order_time.replace(":", ""))
-        order_id = order_date_id + order_time_id
-        order = {
-            "order_id": order_id,
-            "order_date_id": order_date_id,
-            "order_time": order_time,
-            "outlet_id": outlet_id,
-            "payment_mode_id": payment_mode_id,
-        }
+            case "Saturday":
+                order_factor = order_factor + 0.5 + noise_factor
 
-        # Each order can have multiple line items
-        line_id = 1
-        num_products = np.random.randint(1, 5)
-        selected_product_id_list = random.sample(product_id_list, num_products)
+            case "Sunday":
+                order_factor = order_factor + 0.3 + noise_factor
 
-        for product in selected_product_id_list:
-            order["line_id"] = line_id
-            order["product_id"] = product
-            order["unit_count"] = np.random.randint(1, 9)
-            unit_price = product_df[product_df["product_id"] == product]["price"].iloc[0]
-            order["gross_total_sales"] = order["unit_count"] * unit_price
-
-            discount_choices = np.arange(0, 0.41, 0.05)
-            discount_percentage = np.random.choice(
-                discount_choices,
+            case _:
+                order_factor = order_factor + noise_factor
+        print(order_factor)
+        num_orders_adjusted = math.floor(num_orders * order_factor)
+        print(num_orders_adjusted)
+        for x in range(num_orders_adjusted):
+            outlet_id = np.random.choice(
+                outlet_id_list,
                 p=[
-                    0.6,
-                    0,
-                    0.25,
                     0.06,
+                    0.055,
+                    0.045,
+                    0.055,
+                    0.045,
+                    0.06,
+                    0.06,
+                    0.055,
                     0.04,
+                    0.04,
+                    0.035,
+                    0.035,
+                    0.03,
+                    0.03,
+                    0.03,
+                    0.03,
+                    0.03,
+                    0.03,
+                    0.03,
+                    0.04,
+                    0.03,
+                    0.025,
+                    0.025,
                     0.02,
-                    0.02,
-                    0,
-                    0.01,
+                    0.025,
+                    0.025,
+                    0.015,
                 ],
             )
-            order["discount"] = math.floor(discount_percentage * order["gross_total_sales"])
-            order["net_total_sales"] = order["gross_total_sales"] - order["discount"]
-            add_order = order.copy()
-            orders.append(add_order)
-            line_id += 1
+            payment_mode_id = np.random.choice(payment_mode_id_list, p=[0.4, 0.35, 0.1, 0.15])
+            order_date_id = int(date[0].strftime("%Y-%m-%d").replace("-", ""))
+            order_time = str(random_time(10, 22))
+            order = {
+                "order_id": order_id,
+                "order_date_id": order_date_id,
+                "order_time": order_time,
+                "outlet_id": outlet_id,
+                "payment_mode_id": payment_mode_id,
+            }
 
-    df = pd.DataFrame(orders)
-    df["order_line_id"] = df["order_id"].astype(str) + df["line_id"].astype(str)
+            # Each order can have multiple products, each represented by a line item
+            line_id = 1
+            num_products = np.random.randint(1, 5)
+            selected_product_id_list = random.sample(product_id_list, num_products)
 
-    cols = [
-        "order_line_id",
-        "order_id",
-        "line_id",
-        "order_date_id",
-        "order_time",
-        "payment_mode_id",
-        "outlet_id",
-        "product_id",
-        "unit_count",
-        "gross_total_sales",
-        "discount",
-        "net_total_sales",
-    ]
-    df = df[cols]
+            for product in selected_product_id_list:
+                order["line_id"] = line_id
+                order["product_id"] = product
+                order["unit_count"] = np.random.randint(1, 9)
+                unit_price = product_df[product_df["product_id"] == product]["price"].iloc[0]
+                order["gross_total_sales"] = order["unit_count"] * unit_price
+
+                discount_choices = np.arange(0, 0.41, 0.05)
+                discount_percentage = np.random.choice(
+                    discount_choices,
+                    p=[
+                        0.6,
+                        0,
+                        0.25,
+                        0.06,
+                        0.04,
+                        0.02,
+                        0.02,
+                        0,
+                        0.01,
+                    ],
+                )
+                order["discount"] = math.floor(discount_percentage * order["gross_total_sales"])
+                order["net_total_sales"] = int(order["gross_total_sales"] - order["discount"])
+                add_order = order.copy()
+                orders.append(add_order)
+                line_id += 1
+            order_id += 1
+        df = pd.DataFrame(orders)
+        df["order_line_id"] = (df["order_id"].astype(str) + df["line_id"].astype(str)).astype(int)
+
+        cols = [
+            "order_id",
+            "line_id",
+            "order_date_id",
+            "order_time",
+            "payment_mode_id",
+            "outlet_id",
+            "product_id",
+            "unit_count",
+            "gross_total_sales",
+            "discount",
+            "net_total_sales",
+        ]
+        df = df[cols]
 
     return df
 
 
-sales_df = create_sales(1000000)
+sales_df = create_sales(100)
 sales_df.to_csv("fact_sales.csv", index=False)
