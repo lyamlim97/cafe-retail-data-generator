@@ -1,3 +1,4 @@
+import csv
 import numpy as np
 import pandas as pd
 import random
@@ -10,6 +11,11 @@ fake = Faker()
 fake.seed_instance(42)
 np.random.seed(42)
 random.seed(42)
+
+startTime = datetime.now()
+
+start_date = "2022-01-01"
+end_date = "2024-03-31"
 
 
 # Helper functions
@@ -91,7 +97,7 @@ def create_outlet():
 
 # Date table
 def create_date():
-    df = pd.DataFrame(pd.date_range(start="2022-01-01", end="2024-03-31"), columns=["order_date"])
+    df = pd.DataFrame(pd.date_range(start=start_date, end=end_date), columns=["order_date"])
     df = df.assign(order_date_id=lambda x: (x["order_date"].dt.strftime("%Y-%m-%d").str.replace("-", "")))
 
     df = df.assign(day_no=lambda x: (x["order_date_id"].str[6:8]).astype(int))
@@ -121,16 +127,40 @@ date_df.to_csv("dim_date.csv", index=False)
 
 # Sales table
 def create_sales(num_orders):
+    cols = [
+        "order_id",
+        "line_id",
+        "order_date_id",
+        "order_time",
+        "payment_mode_id",
+        "outlet_id",
+        "product_id",
+        "unit_count",
+        "gross_total_sales",
+        "discount",
+        "net_total_sales",
+        "total_cost",
+        "gross_profit",
+    ]
 
-    order_date_list = date_df[["order_date", "order_date_id", "day_name"]].values.tolist()[:31]
+    # Write column names
+    with open(r"fact_sales.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(cols)
+
+    order_date_list = date_df[["order_date", "order_date_id", "day_name"]].values.tolist()
     product_id_list = product_df["product_id"].to_list()
     payment_mode_id_list = payment_mode_df["payment_mode_id"].to_list()
     outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()
-    orders = []
     order_id = 1
+    initial_date = order_date_list[0][0]
     for date in order_date_list:
+
+        date_diff = (date[0] - initial_date).days
+        date_factor = 1 + (0.0005 * date_diff)
+
         order_factor = 1
-        order_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
+        order_noise_factor = round(np.random.randint(-5, 5) / 1000, 3)
         match date[2]:
             case "Friday":
                 order_factor = order_factor + 0.2
@@ -142,6 +172,8 @@ def create_sales(num_orders):
                 order_factor = order_factor
 
         for outlet in outlet_list:
+            orders = []
+
             outlet_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
             match outlet[1]:
                 case "Pavillion KL":
@@ -195,9 +227,9 @@ def create_sales(num_orders):
                 case _:
                     outlet_factor = 1
             num_orders_adjusted = math.floor(
-                num_orders * (order_factor + order_noise_factor) * (outlet_factor + outlet_noise_factor)
+                num_orders * (order_factor + order_noise_factor) * (outlet_factor + outlet_noise_factor) * date_factor
             )
-            for x in range(num_orders_adjusted):
+            for n in range(num_orders_adjusted):
                 # Each order can have multiple products, each represented by a line item
                 payment_mode_id = np.random.choice(payment_mode_id_list, p=[0.4, 0.35, 0.1, 0.15])
                 order_date_id = int(date[0].strftime("%Y-%m-%d").replace("-", ""))
@@ -255,26 +287,16 @@ def create_sales(num_orders):
                     line_id += 1
                 order_id += 1
 
-    df = pd.DataFrame(orders)
-    cols = [
-        "order_id",
-        "line_id",
-        "order_date_id",
-        "order_time",
-        "payment_mode_id",
-        "outlet_id",
-        "product_id",
-        "unit_count",
-        "gross_total_sales",
-        "discount",
-        "net_total_sales",
-        "total_cost",
-        "gross_profit",
-    ]
-    df = df[cols]
-
-    return df
+            # Write data for one outlet at a time
+            for order in orders:
+                reordered_order = {col: order[col] for col in cols}
+                val = reordered_order.values()
+                with open(r"fact_sales.csv", "a", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(val)
+    return 0
 
 
-sales_df = create_sales(100)
-sales_df.to_csv("fact_sales.csv", index=False)
+create_sales(100)
+
+print(datetime.now() - startTime)
