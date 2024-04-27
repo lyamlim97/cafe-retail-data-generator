@@ -210,7 +210,7 @@ def create_sales(num_orders):
                     "payment_mode_id": payment_mode_id,
                 }
                 line_id = 1
-                num_products = np.random.randint(1, 4)  # 1 to 3 products per order
+                num_products = np.random.choice([1, 2, 3, 4], p=[0.65, 0.15, 0.1, 0.1])  # 1 to 4 products per order
                 selected_product_id_list = random.sample(product_id_list, num_products)
                 for product in selected_product_id_list:
                     order["line_id"] = line_id
