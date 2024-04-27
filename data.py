@@ -11,6 +11,9 @@ fake.seed_instance(42)
 np.random.seed(42)
 random.seed(42)
 
+start_date = "2022-01-01"
+end_date = "2024-03-31"
+
 
 # Helper functions
 def random_time(start, end):
@@ -91,7 +94,7 @@ def create_outlet():
 
 # Date table
 def create_date():
-    df = pd.DataFrame(pd.date_range(start="2022-01-01", end="2024-03-31"), columns=["order_date"])
+    df = pd.DataFrame(pd.date_range(start=start_date, end=end_date), columns=["order_date"])
     df = df.assign(order_date_id=lambda x: (x["order_date"].dt.strftime("%Y-%m-%d").str.replace("-", "")))
 
     df = df.assign(day_no=lambda x: (x["order_date_id"].str[6:8]).astype(int))
@@ -121,14 +124,19 @@ date_df.to_csv("dim_date.csv", index=False)
 
 # Sales table
 def create_sales(num_orders):
-
-    order_date_list = date_df[["order_date", "order_date_id", "day_name"]].values.tolist()[:31]
+    order_date_list = date_df[["order_date", "order_date_id", "day_name"]].values.tolist()
     product_id_list = product_df["product_id"].to_list()
     payment_mode_id_list = payment_mode_df["payment_mode_id"].to_list()
-    outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()
+    outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()[:1]
     orders = []
     order_id = 1
+    initial_date = order_date_list[0][0]
     for date in order_date_list:
+
+        date_diff = (date[0] - initial_date).days
+
+        date_factor = 1 + (0.0005 * date_diff)
+        date_noise_factor = round(np.random.randint(-1, 1) / 1000, 3)
         order_factor = 1
         order_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
         match date[2]:
@@ -195,7 +203,10 @@ def create_sales(num_orders):
                 case _:
                     outlet_factor = 1
             num_orders_adjusted = math.floor(
-                num_orders * (order_factor + order_noise_factor) * (outlet_factor + outlet_noise_factor)
+                num_orders
+                * (order_factor + order_noise_factor)
+                * (outlet_factor + outlet_noise_factor)
+                * (date_factor + date_noise_factor)
             )
             for x in range(num_orders_adjusted):
                 # Each order can have multiple products, each represented by a line item
@@ -225,7 +236,7 @@ def create_sales(num_orders):
                 for product in selected_product_id_list:
                     order["line_id"] = line_id
                     order["product_id"] = product
-                    order["unit_count"] = np.random.randint(1, 4)  # 1 to 3 units per product
+                    order["unit_count"] = np.random.choice([1, 2, 3], p=[0.85, 0.1, 0.05])  # 1 to 3 units per product
                     unit_price = product_df[product_df["product_id"] == product]["price"].iloc[0]
                     unit_cost = product_df[product_df["product_id"] == product]["cost"].iloc[0]
                     order["gross_total_sales"] = order["unit_count"] * unit_price
@@ -276,5 +287,5 @@ def create_sales(num_orders):
     return df
 
 
-sales_df = create_sales(50)
+sales_df = create_sales(100)
 sales_df.to_csv("fact_sales.csv", index=False)
