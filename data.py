@@ -225,7 +225,7 @@ def create_sales(num_orders):
                 for product in selected_product_id_list:
                     order["line_id"] = line_id
                     order["product_id"] = product
-                    order["unit_count"] = np.random.randint(1, 4)  # 1 to 3 units per product
+                    order["unit_count"] = np.random.choice([1, 2, 3], p=[0.85, 0.1, 0.05])  # 1 to 3 units per product
                     unit_price = product_df[product_df["product_id"] == product]["price"].iloc[0]
                     unit_cost = product_df[product_df["product_id"] == product]["cost"].iloc[0]
                     order["gross_total_sales"] = order["unit_count"] * unit_price
@@ -276,5 +276,5 @@ def create_sales(num_orders):
     return df
 
 
-sales_df = create_sales(50)
+sales_df = create_sales(100)
 sales_df.to_csv("fact_sales.csv", index=False)
