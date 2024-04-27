@@ -11,6 +11,8 @@ fake.seed_instance(42)
 np.random.seed(42)
 random.seed(42)
 
+startTime = datetime.now()
+
 start_date = "2022-01-01"
 end_date = "2024-03-31"
 
@@ -127,7 +129,7 @@ def create_sales(num_orders):
     order_date_list = date_df[["order_date", "order_date_id", "day_name"]].values.tolist()
     product_id_list = product_df["product_id"].to_list()
     payment_mode_id_list = payment_mode_df["payment_mode_id"].to_list()
-    outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()[:1]
+    outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()
     orders = []
     order_id = 1
     initial_date = order_date_list[0][0]
@@ -285,3 +287,5 @@ def create_sales(num_orders):
 
 sales_df = create_sales(100)
 sales_df.to_csv("fact_sales.csv", index=False)
+
+print(datetime.now() - startTime)
