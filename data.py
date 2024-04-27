@@ -66,14 +66,11 @@ def create_outlet():
         ["Sunway Pyramid Shopping Mall", "Central", "Selangor"],
         ["Sunway Giza Mall", "Central", "Selangor"],
         ["Queensbay Mall", "North", "Penang"],
-        [" Gurney Plaza", "North", "Penang"],
+        ["Gurney Plaza", "North", "Penang"],
         ["Johor Bahru City Square", "South", "Johor"],
         ["IOI City Mall", "Central", "Putrajaya"],
         ["Dataran Pahlawan Melaka Megamall", "South", "Malacca"],
         ["Palm Mall", "Central", "Negeri Sembilan"],
-        ["Suria Sabah", "Borneo", "Sabah"],
-        ["Suria Sabah", "Borneo", "Sabah"],
-        ["Centre Point Sabah", "Borneo", "Sabah"],
         ["Kota Kinabalu City Waterfront", "Borneo", "Sabah"],
         ["Vivacity Megamall", "Borneo", "Sarawak"],
         ["Genting Highlands Premium Outlets", "East", "Pahang"],
@@ -86,7 +83,7 @@ def create_outlet():
         ["Aman Central", "North", "Kedah"],
     ]
     payment_type_id = np.arange(1, len(outlet_data) + 1, 1)
-    df = pd.DataFrame(outlet_data, columns=["outlet_loation", "region", "state"])
+    df = pd.DataFrame(outlet_data, columns=["outlet_location", "region", "state"])
     df = pd.merge(pd.DataFrame(payment_type_id, columns=["outlet_id"]), df, left_index=True, right_index=True)
 
     return df
@@ -128,125 +125,140 @@ def create_sales(num_orders):
     order_date_list = date_df[["order_date", "order_date_id", "day_name"]].values.tolist()[:31]
     product_id_list = product_df["product_id"].to_list()
     payment_mode_id_list = payment_mode_df["payment_mode_id"].to_list()
-    outlet_id_list = outlet_df["outlet_id"].to_list()
+    outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()
     orders = []
     order_id = 1
     for date in order_date_list:
-        print(date)
         order_factor = 1
-        noise_factor = round(np.random.randint(-25, 25) / 100, 1)
+        order_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
         match date[2]:
             case "Friday":
-                order_factor = order_factor + 0.2 + noise_factor
-
+                order_factor = order_factor + 0.2
             case "Saturday":
-                order_factor = order_factor + 0.5 + noise_factor
-
+                order_factor = order_factor + 0.5
             case "Sunday":
-                order_factor = order_factor + 0.3 + noise_factor
-
+                order_factor = order_factor + 0.3
             case _:
-                order_factor = order_factor + noise_factor
-        print(order_factor)
-        num_orders_adjusted = math.floor(num_orders * order_factor)
-        print(num_orders_adjusted)
-        for x in range(num_orders_adjusted):
-            outlet_id = np.random.choice(
-                outlet_id_list,
-                p=[
-                    0.06,
-                    0.055,
-                    0.045,
-                    0.055,
-                    0.045,
-                    0.06,
-                    0.06,
-                    0.055,
-                    0.04,
-                    0.04,
-                    0.035,
-                    0.035,
-                    0.03,
-                    0.03,
-                    0.03,
-                    0.03,
-                    0.03,
-                    0.03,
-                    0.03,
-                    0.04,
-                    0.03,
-                    0.025,
-                    0.025,
-                    0.02,
-                    0.025,
-                    0.025,
-                    0.015,
-                ],
+                order_factor = order_factor
+
+        for outlet in outlet_list:
+            outlet_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
+            match outlet[1]:
+                case "Pavillion KL":
+                    outlet_factor = 2
+                case "The Gardens Mall":
+                    outlet_factor = 1.6
+                case "Sungei Wang Plaza":
+                    outlet_factor = 0.7
+                case "Mid Valley Megamall":
+                    outlet_factor = 1.5
+                case "Bangsar Shopping Centre":
+                    outlet_factor = 1.1
+                case "One Utama":
+                    outlet_factor = 2
+                case "Sunway Pyramid Shopping Mall":
+                    outlet_factor = 1.9
+                case "Sunway Giza Mall":
+                    outlet_factor = 1.2
+                case "Queensbay Mall":
+                    outlet_factor = 1.4
+                case "Gurney Plaza":
+                    outlet_factor = 1.2
+                case "Johor Bahru City Square":
+                    outlet_factor = 1.1
+                case "IOI City Mall":
+                    outlet_factor = 1.1
+                case "Dataran Pahlawan Melaka Megamall":
+                    outlet_factor = 0.8
+                case "Palm Mall":
+                    outlet_factor = 0.7
+                case "Kota Kinabalu City Waterfront":
+                    outlet_factor = 1.1
+                case "Vivacity Megamall":
+                    outlet_factor = 0.9
+                case "Genting Highlands Premium Outlets":
+                    outlet_factor = 1.7
+                case "East Coast Mall":
+                    outlet_factor = 1.1
+                case "Ipoh Parade Shopping Centre":
+                    outlet_factor = 1.2
+                case "Taiping Sentral Mall":
+                    outlet_factor = 0.8
+                case "Financial Park":
+                    outlet_factor = 0.6
+                case "Kota Bharu Mall":
+                    outlet_factor = 0.5
+                case "KTCC MALL":
+                    outlet_factor = 0.7
+                case "Aman Central":
+                    outlet_factor = 0.6
+                case _:
+                    outlet_factor = 1
+            num_orders_adjusted = math.floor(
+                num_orders * (order_factor + order_noise_factor) * (outlet_factor + outlet_noise_factor)
             )
-            payment_mode_id = np.random.choice(payment_mode_id_list, p=[0.4, 0.35, 0.1, 0.15])
-            order_date_id = int(date[0].strftime("%Y-%m-%d").replace("-", ""))
-            order_time = str(random_time(10, 22))
-            order = {
-                "order_id": order_id,
-                "order_date_id": order_date_id,
-                "order_time": order_time,
-                "outlet_id": outlet_id,
-                "payment_mode_id": payment_mode_id,
-            }
+            for x in range(num_orders_adjusted):
+                # Each order can have multiple products, each represented by a line item
+                payment_mode_id = np.random.choice(payment_mode_id_list, p=[0.4, 0.35, 0.1, 0.15])
+                order_date_id = int(date[0].strftime("%Y-%m-%d").replace("-", ""))
+                order_time = str(random_time(10, 22))
+                order = {
+                    "order_id": order_id,
+                    "order_date_id": order_date_id,
+                    "order_time": order_time,
+                    "outlet_id": outlet[0],
+                    "payment_mode_id": payment_mode_id,
+                }
+                line_id = 1
+                num_products = np.random.randint(1, 4)  # 1 to 3 products per order
+                selected_product_id_list = random.sample(product_id_list, num_products)
+                for product in selected_product_id_list:
+                    order["line_id"] = line_id
+                    order["product_id"] = product
+                    order["unit_count"] = np.random.randint(1, 4)  # 1 to 3 units per product
+                    unit_price = product_df[product_df["product_id"] == product]["price"].iloc[0]
+                    order["gross_total_sales"] = order["unit_count"] * unit_price
 
-            # Each order can have multiple products, each represented by a line item
-            line_id = 1
-            num_products = np.random.randint(1, 5)
-            selected_product_id_list = random.sample(product_id_list, num_products)
+                    discount_choices = np.arange(0, 0.41, 0.05)
+                    discount_percentage = np.random.choice(
+                        discount_choices,
+                        p=[
+                            0.6,
+                            0,
+                            0.25,
+                            0.06,
+                            0.04,
+                            0.02,
+                            0.02,
+                            0,
+                            0.01,
+                        ],
+                    )
+                    order["discount"] = math.floor(discount_percentage * order["gross_total_sales"])
+                    order["net_total_sales"] = int(order["gross_total_sales"] - order["discount"])
+                    add_order = order.copy()
+                    orders.append(add_order)
+                    line_id += 1
+                order_id += 1
 
-            for product in selected_product_id_list:
-                order["line_id"] = line_id
-                order["product_id"] = product
-                order["unit_count"] = np.random.randint(1, 9)
-                unit_price = product_df[product_df["product_id"] == product]["price"].iloc[0]
-                order["gross_total_sales"] = order["unit_count"] * unit_price
-
-                discount_choices = np.arange(0, 0.41, 0.05)
-                discount_percentage = np.random.choice(
-                    discount_choices,
-                    p=[
-                        0.6,
-                        0,
-                        0.25,
-                        0.06,
-                        0.04,
-                        0.02,
-                        0.02,
-                        0,
-                        0.01,
-                    ],
-                )
-                order["discount"] = math.floor(discount_percentage * order["gross_total_sales"])
-                order["net_total_sales"] = int(order["gross_total_sales"] - order["discount"])
-                add_order = order.copy()
-                orders.append(add_order)
-                line_id += 1
-            order_id += 1
-        df = pd.DataFrame(orders)
-        df["order_line_id"] = (df["order_id"].astype(str) + df["line_id"].astype(str)).astype(int)
-
-        cols = [
-            "order_id",
-            "line_id",
-            "order_date_id",
-            "order_time",
-            "payment_mode_id",
-            "outlet_id",
-            "product_id",
-            "unit_count",
-            "gross_total_sales",
-            "discount",
-            "net_total_sales",
-        ]
-        df = df[cols]
+    df = pd.DataFrame(orders)
+    cols = [
+        "order_id",
+        "line_id",
+        "order_date_id",
+        "order_time",
+        "payment_mode_id",
+        "outlet_id",
+        "product_id",
+        "unit_count",
+        "gross_total_sales",
+        "discount",
+        "net_total_sales",
+    ]
+    df = df[cols]
 
     return df
 
 
-sales_df = create_sales(100)
+sales_df = create_sales(50)
 sales_df.to_csv("fact_sales.csv", index=False)
