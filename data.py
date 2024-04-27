@@ -137,7 +137,7 @@ def create_sales(num_orders):
         date_factor = 1 + (0.0005 * date_diff)
 
         order_factor = 1
-        order_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
+        order_noise_factor = round(np.random.randint(-5, 5) / 1000, 3)
         match date[2]:
             case "Friday":
                 order_factor = order_factor + 0.2
