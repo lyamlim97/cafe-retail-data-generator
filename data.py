@@ -22,18 +22,18 @@ def random_time(start, end):
 # Product table
 def create_product():
     product_data = [
-        ["Espresso", 700],
-        ["Double Espresso", 1200],
-        ["Americano", 800],
-        ["Long Black", 800],
-        ["Macchiato", 900],
-        ["Cappuccino", 1100],
-        ["Flat White", 1300],
-        ["Cafe Latte", 1100],
-        ["Mocha", 1200],
+        ["Espresso", 700, 75],
+        ["Double Espresso", 1200, 140],
+        ["Americano", 800, 150],
+        ["Long Black", 800, 150],
+        ["Macchiato", 900, 190],
+        ["Cappuccino", 1100, 230],
+        ["Flat White", 1300, 270],
+        ["Cafe Latte", 1100, 250],
+        ["Mocha", 1200, 240],
     ]
     product_id = np.arange(1, len(product_data) + 1, 1)
-    df = pd.DataFrame(product_data, columns=["product_name", "price"])
+    df = pd.DataFrame(product_data, columns=["product_name", "price", "cost"])
     df = pd.merge(pd.DataFrame(product_id, columns=["product_id"]), df, left_index=True, right_index=True)
 
     return df
