@@ -134,9 +134,8 @@ def create_sales(num_orders):
     for date in order_date_list:
 
         date_diff = (date[0] - initial_date).days
-
         date_factor = 1 + (0.0005 * date_diff)
-        date_noise_factor = round(np.random.randint(-1, 1) / 1000, 3)
+
         order_factor = 1
         order_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
         match date[2]:
@@ -203,10 +202,7 @@ def create_sales(num_orders):
                 case _:
                     outlet_factor = 1
             num_orders_adjusted = math.floor(
-                num_orders
-                * (order_factor + order_noise_factor)
-                * (outlet_factor + outlet_noise_factor)
-                * (date_factor + date_noise_factor)
+                num_orders * (order_factor + order_noise_factor) * (outlet_factor + outlet_noise_factor) * date_factor
             )
             for x in range(num_orders_adjusted):
                 # Each order can have multiple products, each represented by a line item
