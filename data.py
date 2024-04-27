@@ -227,7 +227,9 @@ def create_sales(num_orders):
                     order["product_id"] = product
                     order["unit_count"] = np.random.randint(1, 4)  # 1 to 3 units per product
                     unit_price = product_df[product_df["product_id"] == product]["price"].iloc[0]
+                    unit_cost = product_df[product_df["product_id"] == product]["cost"].iloc[0]
                     order["gross_total_sales"] = order["unit_count"] * unit_price
+                    order["total_cost"] = order["unit_count"] * unit_cost
 
                     discount_choices = np.arange(0, 0.41, 0.05)
                     discount_percentage = np.random.choice(
@@ -246,6 +248,8 @@ def create_sales(num_orders):
                     )
                     order["discount"] = math.floor(discount_percentage * order["gross_total_sales"])
                     order["net_total_sales"] = int(order["gross_total_sales"] - order["discount"])
+                    order["gross_profit"] = int(order["net_total_sales"] - order["total_cost"])
+
                     add_order = order.copy()
                     orders.append(add_order)
                     line_id += 1
@@ -264,6 +268,8 @@ def create_sales(num_orders):
         "gross_total_sales",
         "discount",
         "net_total_sales",
+        "total_cost",
+        "gross_profit",
     ]
     df = df[cols]
 
