@@ -22,10 +22,10 @@ def random_time(start, end):
 # Product table
 def create_product():
     product_data = [
-        ["Espresso", 700, 75],
-        ["Double Espresso", 1200, 140],
-        ["Americano", 800, 150],
-        ["Long Black", 800, 150],
+        ["Espresso", 700, 90],
+        ["Double Espresso", 1200, 170],
+        ["Americano", 800, 110],
+        ["Long Black", 800, 110],
         ["Macchiato", 900, 190],
         ["Cappuccino", 1100, 230],
         ["Flat White", 1300, 270],
