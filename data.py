@@ -215,7 +215,13 @@ def create_sales(num_orders):
                 num_products = np.random.choice(
                     num_product_choices, p=[0.65, 0.1, 0.03, 0.1, 0.01, 0.05, 0.01, 0.05]
                 )  # 1 to 4 products per order
-                selected_product_id_list = random.sample(product_id_list, num_products)
+
+                selected_product_id_list = np.random.choice(
+                    product_id_list,
+                    size=num_products,
+                    replace=False,
+                    p=[0.08, 0.02, 0.13, 0.12, 0.1, 0.1, 0.18, 0.17, 0.1],
+                )
                 for product in selected_product_id_list:
                     order["line_id"] = line_id
                     order["product_id"] = product
