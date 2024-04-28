@@ -281,7 +281,7 @@ def create_sales(num_orders):
 
             outlet_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
             match outlet[1]:
-                case "Pavillion KL":
+                case "Pavilion KL":
                     outlet_factor = 2
                 case "The Gardens Mall":
                     outlet_factor = 1.6
