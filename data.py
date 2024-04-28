@@ -17,6 +17,103 @@ startTime = datetime.now()
 start_date = "2021-01-01"
 end_date = "2024-03-31"
 
+# Holiday periods
+hols = [
+    # extra col on right is for custom holiday factor
+    # 2021
+    ["New Year's Day 2021", "2021-01-01", ""],
+    ["Chinese New Year 2021", "2021-02-12", ""],
+    ["Chinese New Year Holiday 2021", "2021-02-13", ""],
+    ["Nuzul Al-Quran 2021", "2021-04-29", ""],
+    ["Labour Day 2021", "2021-05-01", ""],
+    ["Hari Raya Aidilfitri 2021", "2021-05-13", ""],
+    ["Hari Raya Aidilfitri Holiday 2021", "2021-05-14", ""],
+    ["Wesak 2021", "2021-05-26", ""],
+    ["Agong Birthday 2021", "2021-06-07", ""],
+    ["Hari Raya Haji 2021", "2021-07-20", ""],
+    ["Awal Muharram 2021", "2021-08-10", ""],
+    ["Merdeka Day 2021", "2021-08-31", ""],
+    ["Malaysia Day 2021", "2021-09-16", ""],
+    ["Prophet Muhammad's Birthday 2021", "2021-10-19", ""],
+    ["Deepavali 2021", "2021-11-04", ""],
+    ["Christmas Day 2021", "2021-12-25", ""],
+    # 2022
+    ["New Year's Day 2022", "2022-01-01", ""],
+    ["CNY 2022", "2022-02-01", ""],
+    ["CNY 2022", "2022-02-02", ""],
+    ["Nuzul Al-Quran 2022", "2022-04-19", ""],
+    ["Labour Day 2022", "2022-05-01", ""],
+    ["Hari Raya Aidilfitri 2022", "2022-05-02", ""],
+    ["Hari Raya Aidilfitri Holiday 2022", "2022-05-03", ""],
+    ["Labour Day Holiday 2022", "2022-05-04", ""],
+    ["Wesak Day 2022", "2022-05-15", ""],
+    ["Wesak Day Holiday 2022", "2022-05-16", ""],
+    ["Agong Birthday 2022", "2022-06-06", ""],
+    ["Hari Raya Haji 2022", "2022-07-10", ""],
+    ["Hari Raya Haji Holiday 2022", "2022-07-11", ""],
+    ["Awal Muharram 2022", "2022-07-30", ""],
+    ["Merdeka Day 2022", "2022-08-31", ""],
+    ["Malaysia Day 2022", "2022-09-16", ""],
+    ["Prophet Muhammad's Birthday 2022", "2022-10-10", ""],
+    ["Deepavali 2022", "2021-10-24", ""],
+    ["Special Public Holiday (GE15)	2022", "2022-11-18", ""],
+    ["Special Public Holiday (GE15)	2022", "2022-11-19", ""],
+    ["Special Public Holiday 28 Nov	2022", "2022-11-28", ""],
+    ["Christmas Day 2022", "2022-12-25", ""],
+    ["Christmas Holiday 2022", "2022-12-26", ""],
+    # 2023
+    ["New Year's 2023", "2023-01-01", ""],
+    ["New Year Holiday 2023", "2023-01-02", ""],
+    ["Chinese New Year 2023", "2023-01-22", ""],
+    ["Chinese New Year Holiday 2023", "2023-01-23", ""],
+    ["Chinese New Year Holiday 2023", "2023-01-24", ""],
+    ["Nuzul Al-Quran 2023", "2023-04-08", ""],
+    ["Hari Raya Aidilfitri Holiday 2023", "2023-04-21", ""],
+    ["Hari Raya Aidilfitri 2023", "2023-04-22", ""],
+    ["Hari Raya Aidilfitri Holiday 2023", "2023-04-23", ""],
+    ["Hari Raya Aidilfitri Holiday 2023", "2023-04-24", ""],
+    ["Labour Day 2023", "2023-05-01", ""],
+    ["Wesak Day 2023", "2023-05-04", ""],
+    ["Agong's Birthday 2023", "2023-06-05", ""],
+    ["Awal Muharram 2023", "2023-07-19", ""],
+    ["Merdeka Day 2023", "2023-08-31", ""],
+    ["Malaysia Day 2023", "2023-09-16", ""],
+    ["Prophet Muhammad's Birthday 2023", "2023-09-28", ""],
+    ["Deepavali 2023", "2023-10-12", ""],
+    ["Deepavali Holiday 2023", "2023-10-13", ""],
+    ["Christmas Day 2023", "2023-12-25", ""],
+    # 2024
+    ["New Year's Day 2024", "2024-01-01", ""],
+    ["Chinese New Year 2024", "2024-02-10", ""],
+    ["Chinese New Year Holiday 2024", "2024-02-11", ""],
+    ["Chinese New Year Holiday 2024", "2024-02-12", ""],
+    ["Nuzul Al-Quran 2024", "2024-03-28", ""],
+    ["Hari Raya Aidilfitri 2024", "2024-04-10", ""],
+    ["Hari Raya Aidilfitri Holiday 2024", "2024-04-11", ""],
+    ["Labour Day 2024", "2024-05-01", ""],
+    ["Wesak Day 2024", "2024-05-22", ""],
+    ["Agong's Birthday 2024", "2024-06-03", ""],
+    ["Hari Raya Haji 2024", "2024-06-17", ""],
+    ["Awal Muharram 2024", "2024-07-07", ""],
+    ["Awal Muharram Holiday 2024", "2024-07-08", ""],
+    ["Merdeka Day 2024", "2024-08-31", ""],
+    ["Prophet Muhammad's Birthday 2024", "2024-09-16", ""],
+    ["Malaysia Day 2024", "2024-09-16", ""],
+    ["Malaysia Day Holiday 2024", "2024-09-17", ""],
+    ["Deepavali 2024", "2024-10-31", ""],
+    ["Christmas Day 2024", "2024-12-25", ""],
+]
+
+# Flip hols list of lists
+hols_flipped = [list(x) for x in zip(*hols)]
+
+# Check all are valid dates
+for h in hols_flipped[1]:
+    try:
+        datetime.strptime(h, "%Y-%m-%d")
+    except:
+        print("Invalid date")
+
 
 # Helper functions
 def random_time(start, end):
@@ -110,6 +207,7 @@ def create_date():
     df = df.assign(quarter_name=lambda x: ("Quarter " + x["quarter_no"].astype(str)))
 
     df = df.assign(year_no=lambda x: (x["order_date_id"].str[0:4]).astype(int))
+    df = df.assign(year_month_id=lambda x: (x["order_date_id"].str[0:6]).astype(int))
 
     return df
 
@@ -127,6 +225,7 @@ date_df.to_csv("dim_date.csv", index=False)
 
 # Sales table
 def create_sales(num_orders):
+    # Write column names
     cols = [
         "order_id",
         "line_id",
@@ -142,104 +241,6 @@ def create_sales(num_orders):
         "total_cost",
         "gross_profit",
     ]
-    # Holiday periods
-    hols = [
-        # extra col on right is for custom holiday factor
-        # 2021
-        ["New Year's Day 2021", "2021-01-01", ""],
-        ["Chinese New Year 2021", "2021-02-12", ""],
-        ["Chinese New Year Holiday 2021", "2021-02-13", ""],
-        ["Nuzul Al-Quran 2021", "2021-04-29", ""],
-        ["Labour Day 2021", "2021-05-01", ""],
-        ["Hari Raya Aidilfitri 2021", "2021-05-13", ""],
-        ["Hari Raya Aidilfitri Holiday 2021", "2021-05-14", ""],
-        ["Wesak 2021", "2021-05-26", ""],
-        ["Agong Birthday 2021", "2021-06-07", ""],
-        ["Hari Raya Haji 2021", "2021-07-20", ""],
-        ["Awal Muharram 2021", "2021-08-10", ""],
-        ["Merdeka Day 2021", "2021-08-31", ""],
-        ["Malaysia Day 2021", "2021-09-16", ""],
-        ["Prophet Muhammad's Birthday 2021", "2021-10-19", ""],
-        ["Deepavali 2021", "2021-11-04", ""],
-        ["Christmas Day 2021", "2021-12-25", ""],
-        # 2022
-        ["New Year's Day 2022", "2022-01-01", ""],
-        ["CNY 2022", "2022-02-01", ""],
-        ["CNY 2022", "2022-02-02", ""],
-        ["Nuzul Al-Quran 2022", "2022-04-19", ""],
-        ["Labour Day 2022", "2022-05-01", ""],
-        ["Hari Raya Aidilfitri 2022", "2022-05-02", ""],
-        ["Hari Raya Aidilfitri Holiday 2022", "2022-05-03", ""],
-        ["Labour Day Holiday 2022", "2022-05-04", ""],
-        ["Wesak Day 2022", "2022-05-15", ""],
-        ["Wesak Day Holiday 2022", "2022-05-16", ""],
-        ["Agong Birthday 2022", "2022-06-06", ""],
-        ["Hari Raya Haji 2022", "2022-07-10", ""],
-        ["Hari Raya Haji Holiday 2022", "2022-07-11", ""],
-        ["Awal Muharram 2022", "2022-07-30", ""],
-        ["Merdeka Day 2022", "2022-08-31", ""],
-        ["Malaysia Day 2022", "2022-09-16", ""],
-        ["Prophet Muhammad's Birthday 2022", "2022-10-10", ""],
-        ["Deepavali 2022", "2021-10-24", ""],
-        ["Special Public Holiday (GE15)	2022", "2022-11-18", ""],
-        ["Special Public Holiday (GE15)	2022", "2022-11-19", ""],
-        ["Special Public Holiday 28 Nov	2022", "2022-11-28", ""],
-        ["Christmas Day 2022", "2022-12-25", ""],
-        ["Christmas Holiday 2022", "2022-12-26", ""],
-        # 2023
-        ["New Year's 2023", "2023-01-01", ""],
-        ["New Year Holiday 2023", "2023-01-02", ""],
-        ["Chinese New Year 2023", "2023-01-22", ""],
-        ["Chinese New Year Holiday 2023", "2023-01-23", ""],
-        ["Chinese New Year Holiday 2023", "2023-01-24", ""],
-        ["Nuzul Al-Quran 2023", "2023-04-08", ""],
-        ["Hari Raya Aidilfitri Holiday 2023", "2023-04-21", ""],
-        ["Hari Raya Aidilfitri 2023", "2023-04-22", ""],
-        ["Hari Raya Aidilfitri Holiday 2023", "2023-04-23", ""],
-        ["Hari Raya Aidilfitri Holiday 2023", "2023-04-24", ""],
-        ["Labour Day 2023", "2023-05-01", ""],
-        ["Wesak Day 2023", "2023-05-04", ""],
-        ["Agong's Birthday 2023", "2023-06-05", ""],
-        ["Awal Muharram 2023", "2023-07-19", ""],
-        ["Merdeka Day 2023", "2023-08-31", ""],
-        ["Malaysia Day 2023", "2023-09-16", ""],
-        ["Prophet Muhammad's Birthday 2023", "2023-09-28", ""],
-        ["Deepavali 2023", "2023-10-12", ""],
-        ["Deepavali Holiday 2023", "2023-10-13", ""],
-        ["Christmas Day 2023", "2023-12-25", ""],
-        # 2024
-        ["New Year's Day 2024", "2024-01-01", ""],
-        ["Chinese New Year 2024", "2024-02-10", ""],
-        ["Chinese New Year Holiday 2024", "2024-02-11", ""],
-        ["Chinese New Year Holiday 2024", "2024-02-12", ""],
-        ["Nuzul Al-Quran 2024", "2024-03-28", ""],
-        ["Hari Raya Aidilfitri 2024", "2024-04-10", ""],
-        ["Hari Raya Aidilfitri Holiday 2024", "2024-04-11", ""],
-        ["Labour Day 2024", "2024-05-01", ""],
-        ["Wesak Day 2024", "2024-05-22", ""],
-        ["Agong's Birthday 2024", "2024-06-03", ""],
-        ["Hari Raya Haji 2024", "2024-06-17", ""],
-        ["Awal Muharram 2024", "2024-07-07", ""],
-        ["Awal Muharram Holiday 2024", "2024-07-08", ""],
-        ["Merdeka Day 2024", "2024-08-31", ""],
-        ["Prophet Muhammad's Birthday 2024", "2024-09-16", ""],
-        ["Malaysia Day 2024", "2024-09-16", ""],
-        ["Malaysia Day Holiday 2024", "2024-09-17", ""],
-        ["Deepavali 2024", "2024-10-31", ""],
-        ["Christmas Day 2024", "2024-12-25", ""],
-    ]
-
-    # Flip hols list of lists
-    hols_flipped = [list(x) for x in zip(*hols)]
-
-    # Check all are valid dates
-    for h in hols_flipped[1]:
-        try:
-            datetime.strptime(h, "%Y-%m-%d")
-        except:
-            print("Invalid date")
-
-    # Write column names
     with open(r"fact_sales.csv", "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(cols)
@@ -401,6 +402,156 @@ def create_sales(num_orders):
     return 0
 
 
-create_sales(100)
+def create_budget(num_cups):
+    outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()
+
+    year_month_list = date_df[["order_date", "year_month_id"]].values.tolist()
+    year_month_list = date_df["year_month_id"].to_list()
+    year_month_list = list(dict.fromkeys(year_month_list))
+
+    product_id_list = product_df["product_id"].to_list()
+
+    # Count how many public holidays per year_month
+    hols_year_month_df = pd.DataFrame(hols_flipped[1], columns=["order_date"])
+    hols_year_month_df["year_month"] = hols_year_month_df["order_date"].str.replace("-", "").str.slice(0, 6)
+    num_hols_per_year_month_df = (
+        hols_year_month_df.groupby("year_month")
+        .count()
+        .reset_index()
+        .rename(columns={"order_date": "count"})
+        .astype({"year_month": "int64"})
+    )
+
+    # Write column names
+    cols = [
+        "outlet_id",
+        "year_month_id",
+        "product_id",
+        "gross_sales_budget",
+        "discount_budget",
+        "cost_budget",
+        "net_sales_budget",
+        "gross_profit_budget",
+    ]
+    with open(r"fact_budget.csv", "a", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(cols)
+
+    for outlet in outlet_list:
+        budgets = []
+
+        match outlet[1]:
+            case "Pavilion KL":
+                outlet_factor = 2
+            case "The Gardens Mall":
+                outlet_factor = 1.6
+            case "Sungei Wang Plaza":
+                outlet_factor = 0.7
+            case "Mid Valley Megamall":
+                outlet_factor = 1.5
+            case "Bangsar Shopping Centre":
+                outlet_factor = 1.1
+            case "One Utama":
+                outlet_factor = 2
+            case "Sunway Pyramid Shopping Mall":
+                outlet_factor = 1.9
+            case "Sunway Giza Mall":
+                outlet_factor = 1.2
+            case "Queensbay Mall":
+                outlet_factor = 1.4
+            case "Gurney Plaza":
+                outlet_factor = 1.2
+            case "Johor Bahru City Square":
+                outlet_factor = 1.1
+            case "IOI City Mall":
+                outlet_factor = 1.1
+            case "Dataran Pahlawan Melaka Megamall":
+                outlet_factor = 0.8
+            case "Palm Mall":
+                outlet_factor = 0.7
+            case "Kota Kinabalu City Waterfront":
+                outlet_factor = 1.1
+            case "Vivacity Megamall":
+                outlet_factor = 0.9
+            case "Genting Highlands Premium Outlets":
+                outlet_factor = 1.7
+            case "East Coast Mall":
+                outlet_factor = 1.1
+            case "Ipoh Parade Shopping Centre":
+                outlet_factor = 1.2
+            case "Taiping Sentral Mall":
+                outlet_factor = 0.8
+            case "Financial Park":
+                outlet_factor = 0.6
+            case "Kota Bharu Mall":
+                outlet_factor = 0.5
+            case "KTCC MALL":
+                outlet_factor = 0.7
+            case "Aman Central":
+                outlet_factor = 0.6
+            case _:
+                outlet_factor = 1
+        for year_month in year_month_list:
+            try:
+                count = num_hols_per_year_month_df[num_hols_per_year_month_df["year_month"] == year_month][
+                    "count"
+                ].tolist()[0]
+            except:
+                count = 0
+
+            holiday_factor = 1 + (count * 0.5)
+            num_products = len(product_id_list)
+            for product in product_id_list:
+                match product:
+                    case 1:
+                        product_factor = 0.8
+                    case 2:
+                        product_factor = 0.2
+                    case 3:
+                        product_factor = 1.3
+                    case 4:
+                        product_factor = 1.2
+                    case 5:
+                        product_factor = 1
+                    case 6:
+                        product_factor = 1
+                    case 7:
+                        product_factor = 1.8
+                    case 8:
+                        product_factor = 1.7
+                    case 9:
+                        product_factor = 1
+                    case _:
+                        product_factor = 1
+
+                num_cups_adjusted = (
+                    math.floor(num_cups * outlet_factor * holiday_factor * product_factor) / num_products
+                )
+                budget = {
+                    "outlet_id": outlet[0],
+                    "year_month_id": year_month,
+                    "product_id": product,
+                    "gross_sales_budget": num_cups_adjusted * 1000,  # Estimate average 1000 cents per cup
+                    "discount_budget": math.floor(num_cups_adjusted * 1000 * 0.05),  # Estimate average 5% discount
+                    "cost_budget": num_cups_adjusted * 250,  # Estimate average 250 cents per cup
+                }
+                budget["net_sales_budget"] = int(budget["gross_sales_budget"] - budget["discount_budget"])
+                budget["gross_profit_budget"] = int(budget["net_sales_budget"] - budget["cost_budget"])
+
+                add_budget = budget.copy()
+                budgets.append(add_budget)
+
+        for budget in budgets:
+            reordered_budget = {col: budget[col] for col in cols}
+            val = reordered_budget.values()
+            with open(r"fact_budget.csv", "a", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(val)
+
+    return 0
+
+
+# create_sales(100)
+create_budget(3000)
 
 print(datetime.now() - startTime)
