@@ -1,11 +1,7 @@
-import csv
 import numpy as np
-import pandas as pd
 import random
-import math
 from faker import Faker
 from datetime import datetime
-from datetime import timedelta
 
 
 from dim_product import create_product
