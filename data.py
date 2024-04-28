@@ -551,7 +551,7 @@ def create_budget(num_cups):
     return 0
 
 
-create_sales(100)
-create_budget(300)
+# create_sales(100)
+create_budget(3000)
 
 print(datetime.now() - startTime)
