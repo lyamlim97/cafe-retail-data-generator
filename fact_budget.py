@@ -2,6 +2,8 @@ import csv
 import pandas as pd
 import math
 
+from dim_outlet import get_outlet_factor
+
 
 def create_budget(num_cups, date_df, product_df, payment_mode_df, outlet_df, hols_flipped):
     outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()
@@ -40,58 +42,8 @@ def create_budget(num_cups, date_df, product_df, payment_mode_df, outlet_df, hol
 
     for outlet in outlet_list:
         budgets = []
+        outlet_factor = get_outlet_factor(outlet[1])
 
-        match outlet[1]:
-            case "Pavilion KL":
-                outlet_factor = 2
-            case "The Gardens Mall":
-                outlet_factor = 1.6
-            case "Sungei Wang Plaza":
-                outlet_factor = 0.7
-            case "Mid Valley Megamall":
-                outlet_factor = 1.5
-            case "Bangsar Shopping Centre":
-                outlet_factor = 1.1
-            case "One Utama":
-                outlet_factor = 2
-            case "Sunway Pyramid Shopping Mall":
-                outlet_factor = 1.9
-            case "Sunway Giza Mall":
-                outlet_factor = 1.2
-            case "Queensbay Mall":
-                outlet_factor = 1.4
-            case "Gurney Plaza":
-                outlet_factor = 1.2
-            case "Johor Bahru City Square":
-                outlet_factor = 1.1
-            case "IOI City Mall":
-                outlet_factor = 1.1
-            case "Dataran Pahlawan Melaka Megamall":
-                outlet_factor = 0.8
-            case "Palm Mall":
-                outlet_factor = 0.7
-            case "Kota Kinabalu City Waterfront":
-                outlet_factor = 1.1
-            case "Vivacity Megamall":
-                outlet_factor = 0.9
-            case "Genting Highlands Premium Outlets":
-                outlet_factor = 1.7
-            case "East Coast Mall":
-                outlet_factor = 1.1
-            case "Ipoh Parade Shopping Centre":
-                outlet_factor = 1.2
-            case "Taiping Sentral Mall":
-                outlet_factor = 0.8
-            case "Financial Park":
-                outlet_factor = 0.6
-            case "Kota Bharu Mall":
-                outlet_factor = 0.5
-            case "KTCC MALL":
-                outlet_factor = 0.7
-            case "Aman Central":
-                outlet_factor = 0.6
-            case _:
-                outlet_factor = 1
         for year_month in year_month_list:
             try:
                 count = num_hols_per_year_month_df[num_hols_per_year_month_df["year_month"] == year_month][
