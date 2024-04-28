@@ -250,15 +250,15 @@ def create_sales(num_orders):
     outlet_list = outlet_df[["outlet_id", "outlet_location"]].values.tolist()
     order_id = 1
     initial_date = order_date_list[0][0]
+
     for date in order_date_list:
 
         date_diff = (date[0] - initial_date).days
         date_factor = 1 + (0.0005 * date_diff)
 
         order_factor = 1
-        order_noise_factor = round(np.random.randint(-5, 5) / 1000, 3)
 
-        weekend_noise_factor = round(np.random.randint(-10, 10) / 100, 3)
+        noise_factor = round(np.random.randint(-10, 10) / 100, 3)
 
         if date in hols_flipped[1]:
             holiday_factor = 1.5
@@ -279,7 +279,6 @@ def create_sales(num_orders):
         for outlet in outlet_list:
             orders = []
 
-            outlet_noise_factor = round(np.random.randint(-10, 10) / 100, 1)
             match outlet[1]:
                 case "Pavilion KL":
                     outlet_factor = 2
@@ -332,12 +331,7 @@ def create_sales(num_orders):
                 case _:
                     outlet_factor = 1
             num_orders_adjusted = math.floor(
-                num_orders
-                * (weekend_factor + weekend_noise_factor)
-                * (order_factor + order_noise_factor)
-                * (outlet_factor + outlet_noise_factor)
-                * date_factor
-                * holiday_factor
+                num_orders * weekend_factor * order_factor * outlet_factor * date_factor * holiday_factor * noise_factor
             )
             for n in range(num_orders_adjusted):
                 # Each order can have multiple products, each represented by a line item
