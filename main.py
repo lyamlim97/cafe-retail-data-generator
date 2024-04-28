@@ -132,6 +132,6 @@ if __name__ == "__main__":
     date_df.to_csv("dim_date.csv", index=False)
 
     create_sales(100, date_df, product_df, payment_mode_df, outlet_df, hols_flipped)
-    create_budget(3000, date_df, product_df, payment_mode_df, outlet_df, hols_flipped)
+    create_budget(5000, date_df, product_df, payment_mode_df, outlet_df, hols_flipped)
 
     print(datetime.now() - startTime)
