@@ -53,33 +53,30 @@ def create_budget(num_cups, date_df, product_df, payment_mode_df, outlet_df, hol
                 count = 0
 
             holiday_factor = 1 + (count * 0.5)
-            num_products = len(product_id_list)
             for product in product_id_list:
                 match product:
                     case 1:
-                        product_factor = 0.8
+                        product_factor = 0.08
                     case 2:
-                        product_factor = 0.2
+                        product_factor = 0.02
                     case 3:
-                        product_factor = 1.3
+                        product_factor = 0.13
                     case 4:
-                        product_factor = 1.2
+                        product_factor = 0.12
                     case 5:
-                        product_factor = 1
+                        product_factor = 0.1
                     case 6:
-                        product_factor = 1
+                        product_factor = 0.1
                     case 7:
-                        product_factor = 1.8
+                        product_factor = 0.18
                     case 8:
-                        product_factor = 1.7
+                        product_factor = 0.17
                     case 9:
-                        product_factor = 1
+                        product_factor = 0.1
                     case _:
-                        product_factor = 1
+                        product_factor = 0.1
 
-                num_cups_adjusted = (
-                    math.floor(num_cups * outlet_factor * holiday_factor * product_factor) / num_products
-                )
+                num_cups_adjusted = math.floor(num_cups * outlet_factor * holiday_factor * product_factor)
                 budget = {
                     "outlet_id": outlet[0],
                     "year_month_id": year_month,

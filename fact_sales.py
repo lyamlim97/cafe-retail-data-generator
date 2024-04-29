@@ -41,7 +41,7 @@ def create_sales(num_orders, date_df, product_df, payment_mode_df, outlet_df, ho
 
         order_factor = 1
 
-        noise_factor = round(np.random.randint(-10, 10) / 100, 3)
+        noise_factor = 1 + round(np.random.randint(-10, 10) / 100, 3)
 
         if date in hols_flipped[1]:
             holiday_factor = 1.5
