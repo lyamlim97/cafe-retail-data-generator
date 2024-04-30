@@ -1,3 +1,4 @@
+import os
 import csv
 import numpy as np
 import math
@@ -23,6 +24,15 @@ def create_sales(num_orders, date_df, product_df, payment_mode_df, outlet_df, ho
         "total_cost",
         "gross_profit",
     ]
+
+    # Delete file if exists
+    file = "fact_sales.csv"
+    if os.path.exists(file) and os.path.isfile(file):
+        os.remove(file)
+        print("File delete")
+    else:
+        print("File not found")
+
     with open(r"fact_sales.csv", "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(cols)
