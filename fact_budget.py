@@ -1,3 +1,4 @@
+import os
 import csv
 import pandas as pd
 import math
@@ -36,6 +37,15 @@ def create_budget(num_cups, date_df, product_df, payment_mode_df, outlet_df, hol
         "net_sales_budget",
         "gross_profit_budget",
     ]
+
+    # Delete file if exists
+    file = "fact_budget.csv"
+    if os.path.exists(file) and os.path.isfile(file):
+        os.remove(file)
+        print("File delete")
+    else:
+        print("File not found")
+
     with open(r"fact_budget.csv", "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(cols)
