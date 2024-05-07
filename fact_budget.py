@@ -31,10 +31,11 @@ def create_budget(num_cups, date_df, product_df, payment_mode_df, outlet_df, hol
         "outlet_id",
         "year_month_id",
         "product_id",
+        "cups_sold_budget",
         "gross_sales_budget",
         "discount_budget",
-        "cost_budget",
         "net_sales_budget",
+        "cost_budget",
         "gross_profit_budget",
     ]
 
@@ -91,6 +92,7 @@ def create_budget(num_cups, date_df, product_df, payment_mode_df, outlet_df, hol
                     "outlet_id": outlet[0],
                     "year_month_id": year_month,
                     "product_id": product,
+                    "cups_sold_budget": num_cups_adjusted,
                     "gross_sales_budget": num_cups_adjusted * 1000,  # Estimate average 1000 cents per cup
                     "discount_budget": math.floor(num_cups_adjusted * 1000 * 0.05),  # Estimate average 5% discount
                     "cost_budget": num_cups_adjusted * 250,  # Estimate average 250 cents per cup
